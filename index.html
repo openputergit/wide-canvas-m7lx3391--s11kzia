@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .chat-height {
+            height: calc(100vh - 180px);
+        }
+        .message-input {
+            border-top: 1px solid #e5e7eb;
+        }
+        .user-message {
+            background: #e3f2fd;
+            border-radius: 12px 12px 0 12px;
+        }
+        .other-message {
+            background: #f3f4f6;
+            border-radius: 12px 12px 12px 0;
+        }
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: #22c55e;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-80 bg-white border-r border-gray-200">
+            <!-- User Profile -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=40&w=40" 
+                             class="w-10 h-10 rounded-full cursor-pointer" id="profileImage" alt="Profile">
+                        <div class="online-indicator absolute bottom-0 right-0 border-2 border-white"></div>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-sm font-semibold" id="userName">John Doe</h2>
+                        <p class="text-xs text-gray-500">Online</p>
+                    </div>
+                    <button class="text-gray-500 hover:text-gray-700" id="settingsBtn">
+                        <i class="bi bi-gear-fill text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="p-4">
+                <div class="relative">
+                    <input type="text" placeholder="Search chats..." 
+                           class="w-full px-4 py-2 bg-gray-100 rounded-lg text-sm focus:outline-none">
+                    <i class="bi bi-search absolute right-3 top-2.5 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- Chat List -->
+            <div class="overflow-y-auto h-[calc(100vh-180px)]">
+                <div class="p-2">
+                    <div class="chat-item flex items-center p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=40&w=40" 
+                             class="w-10 h-10 rounded-full" alt="Contact">
+                        <div class="ml-3 flex-1">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-sm font-semibold">Sophia Carter</h3>
+                                <span class="text-xs text-gray-500">09:45</span>
+                            </div>
+                            <p class="text-xs text-gray-500 truncate">Can we schedule a call tomorrow?</p>
+                        </div>
+                    </div>
+                    <!-- More chat items... -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="flex-1 flex flex-col">
+            <!-- Chat Header -->
+            <div class="p-4 bg-white border-b border-gray-200 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=40&w=40" 
+                         class="w-10 h-10 rounded-full" alt="Contact">
+                    <div>
+                        <h2 class="text-sm font-semibold">Sophia Carter</h2>
+                        <p class="text-xs text-gray-500">Online</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-500 hover:text-gray-700" id="audioCallBtn">
+                        <i class="bi bi-telephone-fill text-xl"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-gray-700" id="videoCallBtn">
+                        <i class="bi bi-camera-video-fill text-xl"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-gray-700" id="moreOptionsBtn">
+                        <i class="bi bi-three-dots-vertical text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="flex-1 overflow-y-auto p-4 bg-white">
+                <div class="space-y-4">
+                    <!-- Message bubbles will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Message Input -->
+            <div class="p-4 bg-white message-input">
+                <div class="flex items-center space-x-2">
+                    <button class="text-gray-500 hover:text-gray-700" id="attachmentBtn">
+                        <i class="bi bi-paperclip text-xl"></i>
+                    </button>
+                    <input type="text" placeholder="Type a message..." 
+                           class="flex-1 px-4 py-2 bg-gray-100 rounded-lg text-sm focus:outline-none" id="messageInput">
+                    <button class="text-gray-500 hover:text-gray-700" id="emojiBtn">
+                        <i class="bi bi-emoji-smile text-xl"></i>
+                    </button>
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm" id="sendBtn">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal (Hidden by default) -->
+        <div id="settingsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg p-6 w-96">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold">Profile Settings</h2>
+                    <button class="text-gray-500 hover:text-gray-700" id="closeSettingsBtn">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-center">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=80&w=80" 
+                                 class="w-20 h-20 rounded-full" alt="Profile">
+                            <button class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-1">
+                                <i class="bi bi-pencil-fill text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text" value="John Doe" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" value="john@example.com" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" placeholder="••••••••" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <button class="w-full bg-blue-500 text-white py-2 rounded-lg">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Settings Modal
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+
+        settingsBtn.addEventListener('click', () => {
+            settingsModal.classList.remove('hidden');
+        });
+
+        closeSettingsBtn.addEventListener('click', () => {
+            settingsModal.classList.add('hidden');
+        });
+
+        // Chat functionality
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatMessages = document.querySelector('.chat-messages');
+
+        sendBtn.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                appendMessage(message, true);
+                messageInput.value = '';
+                // Simulate received message
+                setTimeout(() => {
+                    appendMessage('Thank you for your message!', false);
+                }, 1000);
+            }
+        });
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+
+        function appendMessage(text, isUser) {
+            const div = document.createElement('div');
+            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`;
+            div.innerHTML = `
+                <div class="${isUser ? 'user-message' : 'other-message'} max-w-[70%] px-4 py-2">
+                    <p class="text-sm">${text}</p>
+                </div>
+            `;
+            document.querySelector('.chat-messages')?.appendChild(div);
+        }
+
+        // File attachment functionality
+        const attachmentBtn = document.getElementById('attachmentBtn');
+        attachmentBtn.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*,application/pdf';
+            input.multiple = true;
+            input.click();
+            
+            input.onchange = (e) => {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    // Handle file upload logic here
+                    console.log(`Uploading file: ${file.name}`);
+                });
+            };
+        });
+
+        // Call functionality
+        const audioCallBtn = document.getElementById('audioCallBtn');
+        const videoCallBtn = document.getElementById('videoCallBtn');
+
+        audioCallBtn.addEventListener('click', () => {
+            alert('Starting audio call...');
+            // Implement audio call logic
+        });
+
+        videoCallBtn.addEventListener('click', () => {
+            alert('Starting video call...');
+            // Implement video call logic
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
